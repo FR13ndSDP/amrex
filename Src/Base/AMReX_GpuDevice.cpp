@@ -212,19 +212,14 @@ Device::Initialize ()
         // hip < 5.2: uuid not supported
         num_device_partners = 1;
 
-#elif defined(AMREX_USE_CUDA) || defined(AMREX_USE_HIP)
+#elif defined(AMREX_USE_CUDA)
 
         constexpr int len = 16;
         static_assert(std::is_same<decltype(AMREX_HIP_OR_CUDA(hipUUID,cudaUUID_t)::bytes),
                                    char[len]>());
         std::vector<char> buf(ParallelDescriptor::NProcs()*len);
         char* pbuf = buf.data();
-#ifdef AMREX_USE_CUDA
         auto const& uuid = device_prop.uuid;
-#else
-        hipUUID uuid;
-        AMREX_HIP_SAFE_CALL(hipDeviceGetUuid(&uuid, device_id));
-#endif
         char const* sbuf = uuid.bytes;
         MPI_Allgather(sbuf, len, MPI_CHAR, pbuf, len, MPI_CHAR,
                       ParallelDescriptor::Communicator());
