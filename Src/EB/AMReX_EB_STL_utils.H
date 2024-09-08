@@ -35,16 +35,16 @@ private:
     bool m_boundry_is_outside; // Is the bounding box boundary outside or inside the object?
 
     void read_ascii_stl_file (std::string const& fname, Real scale,
-                              Array<Real,3> const& center, int reverse_normal);
+                              Array<Real,3> const& center, int reverse_normal, Real angle);
     void read_binary_stl_file (std::string const& fname, Real scale,
-                               Array<Real,3> const& center, int reverse_normal);
+                               Array<Real,3> const& center, int reverse_normal, Real angle);
 
 public:
 
     void prepare ();  // public for cuda
 
     void read_stl_file (std::string const& fname, Real scale, Array<Real,3> const& center,
-                        int reverse_normal);
+                        int reverse_normal, Real angle);
 
     void fill (MultiFab& mf, IntVect const& nghost, Geometry const& geom,
                Real outside_value = -1._rt, Real inside_value = 1._rt) const;

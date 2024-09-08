@@ -15,7 +15,7 @@ class IndexSpaceSTL
 public:
 
    IndexSpaceSTL (const std::string& stl_file, Real stl_scale,
-                  Array<Real,3> const& stl_center, int stl_reverse_normal,
+                  Array<Real,3> const& stl_center, int stl_reverse_normal, Real stl_angle,
                   const Geometry& geom, int required_coarsening_level,
                   int max_coarsening_level, int ngrow,
                   bool build_coarse_level_by_coarsening,

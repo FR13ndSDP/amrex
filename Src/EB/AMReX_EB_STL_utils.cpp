@@ -93,7 +93,7 @@ namespace {
 
 void
 STLtools::read_stl_file (std::string const& fname, Real scale, Array<Real,3> const& center,
-                         int reverse_normal)
+                         int reverse_normal, Real angle)
 {
     if (ParallelDescriptor::IOProcessor()) {
         char header[6];
@@ -107,9 +107,9 @@ STLtools::read_stl_file (std::string const& fname, Real scale, Array<Real,3> con
         }
         int is_binary = std::strcmp(header, "solid");
         if (is_binary) {
-            read_binary_stl_file(fname, scale, center, reverse_normal);
+            read_binary_stl_file(fname, scale, center, reverse_normal, angle);
         } else {
-            read_ascii_stl_file(fname, scale, center, reverse_normal);
+            read_ascii_stl_file(fname, scale, center, reverse_normal, angle);
         }
     }
 
@@ -118,7 +118,7 @@ STLtools::read_stl_file (std::string const& fname, Real scale, Array<Real,3> con
 
 void
 STLtools::read_binary_stl_file (std::string const& fname, Real scale,
-                                Array<Real,3> const& center, int reverse_normal)
+                                Array<Real,3> const& center, int reverse_normal, Real angle)
 {
     if (ParallelDescriptor::IOProcessor()) {
         if (amrex::Verbose()) {
@@ -151,11 +151,20 @@ STLtools::read_binary_stl_file (std::string const& fname, Real scale,
         for (int i=0; i < m_num_tri; ++i) {
             is.read(tmp, 50);  // 50 bytes for each triangle. Vertex 1 starts at 12 bytes.
             Real* p = &(m_tri_pts_h[i].v1.x);
+            Real pp[3] = {0.0};
             RealDescriptor::convertToNativeFormat(p, 9, tmp+12, real32_descr);
             for (int j = 0; j < 3; ++j) {
                 p[0] = p[0] * scale + center[0];
                 p[1] = p[1] * scale + center[1];
                 p[2] = p[2] * scale + center[2];
+
+                // now rotate
+                pp[1] = cos(angle)*p[1] - sin(angle)*p[2];
+                pp[2] = sin(angle)*p[1] + cos(angle)*p[2];
+
+                p[1] = pp[1];
+                p[2] = pp[2];
+
                 p += 3;
             }
             if (reverse_normal) {
@@ -167,7 +176,7 @@ STLtools::read_binary_stl_file (std::string const& fname, Real scale,
 
 void
 STLtools::read_ascii_stl_file (std::string const& fname, Real scale,
-                               Array<Real,3> const& center, int reverse_normal)
+                               Array<Real,3> const& center, int reverse_normal, Real angle)
 {
     if (ParallelDescriptor::IOProcessor()) {
         if (amrex::Verbose()) {
@@ -217,12 +226,17 @@ STLtools::read_ascii_stl_file (std::string const& fname, Real scale,
             std::getline(is,tmp); // outer loop
 
             Real x, y, z;
+            Real xx, yy, zz;
 
             for (int iv = 0; iv < 3; ++iv) { // 3 vertices
                 is >> tmp >> x >> y >> z;
-                *p++ = x * scale + center[0];
-                *p++ = y * scale + center[1];
-                *p++ = z * scale + center[2];
+                xx = x * scale + center[0];
+                yy = y * scale + center[1];
+                zz = z * scale + center[2];
+
+                *p++ = xx;
+                *p++ = cos(angle)*yy - sin(angle)*zz;
+                *p++ = sin(angle)*yy + cos(angle)*zz;
             }
             std::getline(is,tmp); // read \n
 

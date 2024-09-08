@@ -3,7 +3,7 @@
 namespace amrex::EB2 {
 
 IndexSpaceSTL::IndexSpaceSTL (const std::string& stl_file, Real stl_scale,
-                              Array<Real,3> const& stl_center, int stl_reverse_normal,
+                              Array<Real,3> const& stl_center, int stl_reverse_normal, Real stl_angle,
                               const Geometry& geom, int required_coarsening_level,
                               int max_coarsening_level, int ngrow,
                               bool build_coarse_level_by_coarsening,
@@ -12,7 +12,7 @@ IndexSpaceSTL::IndexSpaceSTL (const std::string& stl_file, Real stl_scale,
     Gpu::LaunchSafeGuard lsg(true); // Always use GPU
 
     STLtools stl_tools;
-    stl_tools.read_stl_file(stl_file, stl_scale, stl_center, stl_reverse_normal);
+    stl_tools.read_stl_file(stl_file, stl_scale, stl_center, stl_reverse_normal, stl_angle);
 
     // build finest level (i.e., level 0) first
     AMREX_ALWAYS_ASSERT(required_coarsening_level >= 0 && required_coarsening_level <= 30);

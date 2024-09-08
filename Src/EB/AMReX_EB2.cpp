@@ -83,7 +83,7 @@ const IndexSpace* TopIndexSpaceIfPresent() noexcept {
 void
 Build (const Geometry& geom, int required_coarsening_level,
        int max_coarsening_level, int ngrow, bool build_coarse_level_by_coarsening,
-       bool a_extend_domain_face, int a_num_coarsen_opt)
+       bool a_extend_domain_face, int a_num_coarsen_opt, Real stl_angle)
 {
     ParmParse pp("eb2");
     std::string geom_type;
@@ -218,7 +218,7 @@ Build (const Geometry& geom, int required_coarsening_level,
         pp.queryAdd("stl_reverse_normal", stl_reverse_normal);
         IndexSpace::push(new IndexSpaceSTL(stl_file, stl_scale, // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
                                            {stl_center[0], stl_center[1], stl_center[2]},
-                                           int(stl_reverse_normal),
+                                           int(stl_reverse_normal), stl_angle,
                                            geom, required_coarsening_level,
                                            max_coarsening_level, ngrow,
                                            build_coarse_level_by_coarsening,

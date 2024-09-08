@@ -134,7 +134,8 @@ void Build (const Geometry& geom,
             int ngrow = 4,
             bool build_coarse_level_by_coarsening = true,
             bool extend_domain_face = ExtendDomainFace(),
-            int num_coarsen_opt = NumCoarsenOpt());
+            int num_coarsen_opt = NumCoarsenOpt(),
+            Real angle = 0._rt);
 
 void BuildFromChkptFile (std::string const& fname,
                          const Geometry& geom,
