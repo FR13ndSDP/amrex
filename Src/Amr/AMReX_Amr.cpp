@@ -1570,7 +1570,7 @@ Amr::restart (const std::string& filename)
            }
        }
 
-       checkInput();
+       if (check_input) {checkInput()};
        //
        // Read levels.
        //
@@ -1637,7 +1637,7 @@ Amr::restart (const std::string& filename)
            }
        }
 
-       checkInput();
+       if (check_input) {checkInput()};
 
        //
        // Read levels.
